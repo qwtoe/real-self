@@ -75,7 +75,8 @@
 
   // ─── State ──────────────────────────────────────────────────────────
   let mediaStream = null;
-  let videoElement = null;
+  let videoElement = null;     // visible video for split-mode display
+  let hiddenVideo = null;      // off-screen video for canvas drawing
   let animationFrameId = null;
   let currentMode = 'split'; // 'split' | 'slider'
   let sliderPosition = 0.5;
@@ -116,6 +117,16 @@
       videoElement.srcObject = mediaStream;
       videoElement.style.display = 'block';
 
+      // Create an off-screen video that remains "rendered" for canvas drawImage
+      hiddenVideo = document.createElement('video');
+      hiddenVideo.srcObject = mediaStream;
+      hiddenVideo.autoplay = true;
+      hiddenVideo.playsInline = true;
+      hiddenVideo.muted = true;
+      hiddenVideo.style.cssText = 'position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;left:-9999px;';
+      document.body.appendChild(hiddenVideo);
+      hiddenVideo.play().catch(() => {});
+
       // Hide placeholders, show canvas
       els.mirrorPlaceholder.style.display = 'none';
       els.realPlaceholder.style.display = 'none';
@@ -126,9 +137,9 @@
       els.btnStart.disabled = true;
       els.btnSnap.style.display = 'inline-block';
 
-      videoElement.onloadedmetadata = () => {
-        const width = videoElement.videoWidth;
-        const height = videoElement.videoHeight;
+      hiddenVideo.onloadedmetadata = () => {
+        const width = hiddenVideo.videoWidth;
+        const height = hiddenVideo.videoHeight;
 
         els.realCanvas.width = width;
         els.realCanvas.height = height;
@@ -152,13 +163,13 @@
   }
 
   function renderFrame() {
-    if (!videoElement || videoElement.paused || videoElement.ended) {
+    if (!hiddenVideo || hiddenVideo.paused || hiddenVideo.ended || hiddenVideo.readyState < 2) {
       animationFrameId = requestAnimationFrame(renderFrame);
       return;
     }
 
-    const width = videoElement.videoWidth;
-    const height = videoElement.videoHeight;
+    const width = hiddenVideo.videoWidth;
+    const height = hiddenVideo.videoHeight;
 
     if (currentMode === 'split') {
       drawRealView(width, height);
@@ -173,7 +184,7 @@
   function drawRealView(width, height) {
     const ctx = els.realCanvas.getContext('2d');
     ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(videoElement, 0, 0, width, height);
+    ctx.drawImage(hiddenVideo, 0, 0, width, height);
   }
 
   function drawSliderMirror(width, height) {
@@ -182,14 +193,14 @@
     ctx.save();
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(videoElement, 0, 0, width, height);
+    ctx.drawImage(hiddenVideo, 0, 0, width, height);
     ctx.restore();
   }
 
   function drawSliderReal(width, height) {
     const ctx = els.sliderReal.getContext('2d');
     ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(videoElement, 0, 0, width, height);
+    ctx.drawImage(hiddenVideo, 0, 0, width, height);
   }
 
   // ─── Mode Switching ─────────────────────────────────────────────────
@@ -224,10 +235,10 @@
 
   // ─── Snapshot ───────────────────────────────────────────────────────
   function takeSnapshot() {
-    if (!videoElement) return;
+    if (!hiddenVideo) return;
 
-    const width = videoElement.videoWidth;
-    const height = videoElement.videoHeight;
+    const width = hiddenVideo.videoWidth;
+    const height = hiddenVideo.videoHeight;
 
     // Mirrored snapshot
     const mirrorCanvas = document.createElement('canvas');
@@ -237,7 +248,7 @@
     mCtx.save();
     mCtx.translate(width, 0);
     mCtx.scale(-1, 1);
-    mCtx.drawImage(videoElement, 0, 0, width, height);
+    mCtx.drawImage(hiddenVideo, 0, 0, width, height);
     mCtx.restore();
 
     // Real snapshot
@@ -245,7 +256,7 @@
     realCanvas.width = width;
     realCanvas.height = height;
     const rCtx = realCanvas.getContext('2d');
-    rCtx.drawImage(videoElement, 0, 0, width, height);
+    rCtx.drawImage(hiddenVideo, 0, 0, width, height);
 
     // Render preview
     els.snapPreview.innerHTML = '';
@@ -304,7 +315,7 @@
     }
     if (e.key === '1') setMode('split');
     if (e.key === '2') setMode('slider');
-    if ((e.key === 'p' || e.key === 'P') && videoElement) {
+    if ((e.key === 'p' || e.key === 'P') && hiddenVideo) {
       takeSnapshot();
     }
   });
@@ -314,6 +325,10 @@
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
+    }
+    if (hiddenVideo) {
+      hiddenVideo.pause();
+      hiddenVideo.remove();
     }
   });
 
