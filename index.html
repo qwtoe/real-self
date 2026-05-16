@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="See the difference between your mirrored reflection and how others actually see you. A privacy-first, browser-based camera comparison tool.">
+  <meta name="theme-color" content="#0f0f1a">
+  <meta name="author" content="Real Self Team">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Real Self — Mirror vs Reality">
+  <meta property="og:description" content="Discover how your mirrored reflection differs from how others see you.">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Real Self — Mirror vs Reality">
+  <meta name="twitter:description" content="Discover how your mirrored reflection differs from how others see you.">
+
+  <title>Real Self — Mirror vs Reality</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <h1 class="app-title">Real Self</h1>
+    <p class="app-subtitle">Compare your mirrored reflection with how the world actually sees you.</p>
+  </header>
+
+  <nav class="controls" role="toolbar" aria-label="Application controls">
+    <button class="btn btn-primary" id="btnStart" aria-label="Start camera">Start Camera</button>
+    <button class="btn btn-secondary active" id="btnSplit" aria-label="Side by side mode">Side by Side</button>
+    <button class="btn btn-secondary" id="btnSlider" aria-label="Slider comparison mode">Slider</button>
+    <button class="btn btn-snap" id="btnSnap" aria-label="Take snapshot" style="display:none;">Take Snapshot</button>
+  </nav>
+
+  <!-- Split Mode -->
+  <main class="container" id="splitMode" role="region" aria-label="Side by side comparison">
+    <article class="panel">
+      <header class="panel-header mirror">
+        <span class="icon" aria-hidden="true">🪞</span>
+        Mirrored
+      </header>
+      <div class="video-wrap" id="mirrorWrap">
+        <div class="placeholder" id="mirrorPlaceholder">
+          <span class="big-icon" aria-hidden="true">🪞</span>
+          <span>Camera inactive</span>
+        </div>
+        <video id="mirrorVideo" class="video-mirror" autoplay playsinline muted style="display:none;"></video>
+      </div>
+      <footer class="panel-footer">Horizontally flipped (default selfie view)</footer>
+    </article>
+
+    <article class="panel">
+      <header class="panel-header real">
+        <span class="icon" aria-hidden="true">👤</span>
+        Reality
+      </header>
+      <div class="video-wrap" id="realWrap">
+        <div class="placeholder" id="realPlaceholder">
+          <span class="big-icon" aria-hidden="true">👤</span>
+          <span>Camera inactive</span>
+        </div>
+        <canvas id="realCanvas" style="display:none;" aria-label="Real camera view"></canvas>
+      </div>
+      <footer class="panel-footer">Unflipped (how others see you)</footer>
+    </article>
+  </main>
+
+  <!-- Slider Mode -->
+  <section class="slider-container" id="sliderMode" role="region" aria-label="Slider comparison" style="display:none;">
+    <canvas id="sliderMirror" class="slider-mirror" aria-hidden="true"></canvas>
+    <canvas id="sliderReal" aria-hidden="true"></canvas>
+    <div class="slider-line" id="sliderLine" aria-hidden="true"></div>
+    <div class="slider-handle" id="sliderHandle" aria-hidden="true">↔</div>
+    <div class="slider-labels" aria-hidden="true">
+      <span>Mirrored</span>
+      <span>Reality</span>
+    </div>
+  </section>
+
+  <!-- Snapshot Preview -->
+  <section class="snap-preview" id="snapPreview" role="region" aria-label="Snapshot results"></section>
+
+  <footer class="app-footer">
+    <p>All processing happens locally in your browser. No images are uploaded.</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
