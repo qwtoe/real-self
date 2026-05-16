@@ -29,15 +29,19 @@
 <body>
 
   <header class="app-header">
-    <h1 class="app-title">Real Self</h1>
-    <p class="app-subtitle">Compare your mirrored reflection with how the world actually sees you.</p>
+    <h1 class="app-title" data-i18n="appTitle">Real Self</h1>
+    <p class="app-subtitle" data-i18n="appSubtitle">Compare your mirrored reflection with how the world actually sees you.</p>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="en" aria-label="English">EN</button>
+      <button class="lang-btn" data-lang="zh" aria-label="中文">中文</button>
+    </div>
   </header>
 
   <nav class="controls" role="toolbar" aria-label="Application controls">
-    <button class="btn btn-primary" id="btnStart" aria-label="Start camera">Start Camera</button>
-    <button class="btn btn-secondary active" id="btnSplit" aria-label="Side by side mode">Side by Side</button>
-    <button class="btn btn-secondary" id="btnSlider" aria-label="Slider comparison mode">Slider</button>
-    <button class="btn btn-snap" id="btnSnap" aria-label="Take snapshot" style="display:none;">Take Snapshot</button>
+    <button class="btn btn-primary" id="btnStart" data-i18n="btnStart" aria-label="Start camera">Start Camera</button>
+    <button class="btn btn-secondary active" id="btnSplit" data-i18n="btnSplit" aria-label="Side by side mode">Side by Side</button>
+    <button class="btn btn-secondary" id="btnSlider" data-i18n="btnSlider" aria-label="Slider comparison mode">Slider</button>
+    <button class="btn btn-snap" id="btnSnap" data-i18n="btnSnap" aria-label="Take snapshot" style="display:none;">Take Snapshot</button>
   </nav>
 
   <!-- Split Mode -->
@@ -45,31 +49,31 @@
     <article class="panel">
       <header class="panel-header mirror">
         <span class="icon" aria-hidden="true">🪞</span>
-        Mirrored
+        <span data-i18n="labelMirror">Mirrored</span>
       </header>
       <div class="video-wrap" id="mirrorWrap">
         <div class="placeholder" id="mirrorPlaceholder">
           <span class="big-icon" aria-hidden="true">🪞</span>
-          <span>Camera inactive</span>
+          <span data-i18n="placeholderInactive">Camera inactive</span>
         </div>
         <video id="mirrorVideo" class="video-mirror" autoplay playsinline muted style="display:none;"></video>
       </div>
-      <footer class="panel-footer">Horizontally flipped (default selfie view)</footer>
+      <footer class="panel-footer" data-i18n="footerMirror">Horizontally flipped (default selfie view)</footer>
     </article>
 
     <article class="panel">
       <header class="panel-header real">
         <span class="icon" aria-hidden="true">👤</span>
-        Reality
+        <span data-i18n="labelReal">Reality</span>
       </header>
       <div class="video-wrap" id="realWrap">
         <div class="placeholder" id="realPlaceholder">
           <span class="big-icon" aria-hidden="true">👤</span>
-          <span>Camera inactive</span>
+          <span data-i18n="placeholderInactive">Camera inactive</span>
         </div>
         <canvas id="realCanvas" style="display:none;" aria-label="Real camera view"></canvas>
       </div>
-      <footer class="panel-footer">Unflipped (how others see you)</footer>
+      <footer class="panel-footer" data-i18n="footerReal">Unflipped (how others see you)</footer>
     </article>
   </main>
 
@@ -80,8 +84,8 @@
     <div class="slider-line" id="sliderLine" aria-hidden="true"></div>
     <div class="slider-handle" id="sliderHandle" aria-hidden="true">↔</div>
     <div class="slider-labels" aria-hidden="true">
-      <span>Mirrored</span>
-      <span>Reality</span>
+      <span data-i18n="labelMirrorShort">Mirrored</span>
+      <span data-i18n="labelRealShort">Reality</span>
     </div>
   </section>
 
@@ -89,7 +93,7 @@
   <section class="snap-preview" id="snapPreview" role="region" aria-label="Snapshot results"></section>
 
   <footer class="app-footer">
-    <p>All processing happens locally in your browser. No images are uploaded.</p>
+    <p data-i18n="appFooter">All processing happens locally in your browser. No images are uploaded.</p>
   </footer>
 
   <script src="js/app.js"></script>

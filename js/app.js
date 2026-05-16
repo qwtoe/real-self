@@ -6,6 +6,73 @@
 (function () {
   'use strict';
 
+  // ─── Internationalization ───────────────────────────────────────────
+  const i18n = {
+    en: {
+      appTitle: 'Real Self',
+      appSubtitle: 'Compare your mirrored reflection with how the world actually sees you.',
+      btnStart: 'Start Camera',
+      btnSplit: 'Side by Side',
+      btnSlider: 'Slider',
+      btnSnap: 'Take Snapshot',
+      labelMirror: 'Mirrored',
+      labelReal: 'Reality',
+      labelMirrorShort: 'Mirrored',
+      labelRealShort: 'Reality',
+      placeholderInactive: 'Camera inactive',
+      footerMirror: 'Horizontally flipped (default selfie view)',
+      footerReal: 'Unflipped (how others see you)',
+      appFooter: 'All processing happens locally in your browser. No images are uploaded.',
+      snapMirror: 'Mirrored (what you are used to)',
+      snapReal: 'Real (how others see you)',
+      cameraActive: 'Camera Active',
+      alertCameraError: 'Unable to access camera: ',
+    },
+    zh: {
+      appTitle: '真实自我',
+      appSubtitle: '对比你习惯的镜像，和别人眼中真实的你。',
+      btnStart: '开启摄像头',
+      btnSplit: '并排对比',
+      btnSlider: '滑动对比',
+      btnSnap: '截图对比',
+      labelMirror: '镜像',
+      labelReal: '真实',
+      labelMirrorShort: '镜像',
+      labelRealShort: '真实',
+      placeholderInactive: '摄像头未开启',
+      footerMirror: '水平翻转（自拍默认效果）',
+      footerReal: '未翻转（别人眼中的你）',
+      appFooter: '所有处理均在浏览器本地完成，不会上传任何图像。',
+      snapMirror: '镜像（你习惯看到的自己）',
+      snapReal: '真实（别人眼中的你）',
+      cameraActive: '摄像头已开启',
+      alertCameraError: '无法访问摄像头：',
+    },
+  };
+
+  let currentLang = localStorage.getItem('realself-lang') || 'en';
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('realself-lang', lang);
+
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      if (i18n[lang][key]) {
+        el.textContent = i18n[lang][key];
+      }
+    });
+
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    // Update dynamic elements if camera is already active
+    if (els.btnStart.disabled) {
+      els.btnStart.textContent = i18n[lang].cameraActive;
+    }
+  }
+
   // ─── State ──────────────────────────────────────────────────────────
   let mediaStream = null;
   let videoElement = null;
@@ -55,7 +122,7 @@
       els.realCanvas.style.display = 'block';
 
       // Update UI
-      els.btnStart.textContent = 'Camera Active';
+      els.btnStart.textContent = i18n[currentLang].cameraActive;
       els.btnStart.disabled = true;
       els.btnSnap.style.display = 'inline-block';
 
@@ -74,7 +141,7 @@
       };
     } catch (error) {
       console.error('Camera access failed:', error);
-      alert('Unable to access camera: ' + error.message);
+      alert(i18n[currentLang].alertCameraError + error.message);
     }
   }
 
@@ -140,7 +207,10 @@
   // ─── Slider Interaction ─────────────────────────────────────────────
   function updateSlider() {
     const percentage = sliderPosition * 100;
+    // Mirror canvas shows left portion (flipped)
     els.sliderMirror.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+    // Real canvas shows right portion (unflipped) — this is the key fix
+    els.sliderReal.style.clipPath = `inset(0 0 0 ${percentage}%)`;
     els.sliderLine.style.left = percentage + '%';
     els.sliderHandle.style.left = percentage + '%';
   }
@@ -182,8 +252,8 @@
     els.snapPreview.classList.add('visible');
 
     const snapshots = [
-      { canvas: mirrorCanvas, label: 'Mirrored (what you are used to)' },
-      { canvas: realCanvas, label: 'Real (how others see you)' },
+      { canvas: mirrorCanvas, label: i18n[currentLang].snapMirror },
+      { canvas: realCanvas, label: i18n[currentLang].snapReal },
     ];
 
     snapshots.forEach(({ canvas, label }) => {
@@ -204,6 +274,11 @@
   els.btnSplit.addEventListener('click', () => setMode('split'));
   els.btnSlider.addEventListener('click', () => setMode('slider'));
   els.btnSnap.addEventListener('click', takeSnapshot);
+
+  // Language switch
+  document.querySelectorAll('.lang-btn').forEach((btn) => {
+    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+  });
 
   // Slider drag
   els.sliderMode.addEventListener('mousedown', () => (isDragging = true));
@@ -241,4 +316,7 @@
       mediaStream.getTracks().forEach((track) => track.stop());
     }
   });
+
+  // Initialize language on load
+  setLanguage(currentLang);
 })();

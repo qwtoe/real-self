@@ -50,6 +50,36 @@ body {
   margin-bottom: 20px;
 }
 
+.lang-switch {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.lang-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.lang-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+.lang-btn.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: var(--text-primary);
+  border-color: transparent;
+}
+
 .app-title {
   font-size: 1.75rem;
   font-weight: 700;
@@ -250,6 +280,10 @@ body {
 
 .slider-mirror {
   clip-path: inset(0 50% 0 0);
+}
+
+.slider-real {
+  clip-path: inset(0 0 0 50%);
 }
 
 .slider-line {
