@@ -36,6 +36,7 @@
       hintSplit: 'Split',
       hintSlider: 'Slider',
       hintSnap: 'Snap',
+      toastCameraStarting: 'Starting camera...',
       toastCameraStarted: 'Camera started',
       toastCameraActive: 'Camera is already active',
       toastModeSplit: 'Switched to side-by-side mode',
@@ -72,6 +73,7 @@
       hintSplit: '并排',
       hintSlider: '滑动',
       hintSnap: '截图',
+      toastCameraStarting: '正在开启摄像头...',
       toastCameraStarted: '摄像头已开启',
       toastCameraActive: '摄像头已经是开启状态',
       toastModeSplit: '已切换到并排模式',
@@ -139,7 +141,7 @@
   };
 
   // ─── Toast Notifications ────────────────────────────────────────────
-  function showToast(message, type = 'info') {
+  function showToast(message, type = 'info', duration = 2500) {
     const container = document.getElementById('toastContainer');
     if (!container) return;
 
@@ -158,7 +160,7 @@
       setTimeout(() => {
         toast.remove();
       }, 300);
-    }, 2500);
+    }, duration);
   }
 
   // ─── Camera ─────────────────────────────────────────────────────────
@@ -177,6 +179,7 @@
   }
 
   async function startCamera() {
+    showToast(i18n[currentLang].toastCameraStarting, 'info', 4000);
     clearCameraError();
     els.btnStart.textContent = i18n[currentLang].btnStarting;
     els.btnStart.disabled = true;
