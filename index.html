@@ -38,6 +38,7 @@
   </header>
 
   <nav class="controls" role="toolbar" aria-label="Application controls">
+    <div class="toast-container" id="toastContainer" role="status" aria-live="polite"></div>
     <button class="btn btn-primary" id="btnStart" data-i18n="btnStart" aria-label="Start camera">Start Camera</button>
     <button class="btn btn-secondary active" id="btnSplit" data-i18n="btnSplit" aria-label="Side by side mode">Side by Side</button>
     <button class="btn btn-secondary" id="btnSlider" data-i18n="btnSlider" aria-label="Slider comparison mode">Slider</button>
@@ -63,7 +64,6 @@
         <span data-i18n="labelMirror">Mirrored</span>
       </header>
       <div class="video-wrap" id="mirrorWrap">
-        <div class="toast-container" id="toastContainer" role="status" aria-live="polite"></div>
         <div class="placeholder" id="mirrorPlaceholder">
           <span class="big-icon" aria-hidden="true">🪞</span>
           <span data-i18n="placeholderInactive">Camera inactive</span>
