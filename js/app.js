@@ -384,4 +384,13 @@
 
   // Initialize language on load
   setLanguage(currentLang);
+
+  // Auto-start camera on page load
+  // Note: Browsers may block getUserMedia without user interaction,
+  // so this is a best-effort; the Start Camera button remains as fallback.
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    startCamera().catch(() => {
+      // Silently fail; user can click Start Camera manually
+    });
+  }
 })();
