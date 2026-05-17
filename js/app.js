@@ -31,7 +31,10 @@
       btnRetry: 'Try Again',
       btnDownload: 'Download',
       alertCameraError: 'Unable to access camera: ',
-      hintShortcuts: 'Shortcuts: <kbd>S</kbd> Start <kbd>1</kbd> Split <kbd>2</kbd> Slider <kbd>P</kbd> Snapshot',
+      hintStart: 'Start',
+      hintSplit: 'Split',
+      hintSlider: 'Slider',
+      hintSnap: 'Snap',
     },
     zh: {
       appTitle: '真实自我',
@@ -56,7 +59,10 @@
       btnRetry: '重试',
       btnDownload: '下载',
       alertCameraError: '无法访问摄像头：',
-      hintShortcuts: '快捷键：<kbd>S</kbd> 开启 <kbd>1</kbd> 并排 <kbd>2</kbd> 滑动 <kbd>P</kbd> 截图',
+      hintStart: '开启',
+      hintSplit: '并排',
+      hintSlider: '滑动',
+      hintSnap: '截图',
     },
   };
 
