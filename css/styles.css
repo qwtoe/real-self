@@ -108,6 +108,15 @@ body {
   flex-wrap: wrap;
 }
 
+.hint-label {
+  font-weight: 600;
+  color: var(--accent-primary);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 4px;
+}
+
 .hint-item {
   display: inline-flex;
   align-items: center;
