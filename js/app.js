@@ -97,6 +97,8 @@
   let currentMode = 'split'; // 'split' | 'slider'
   let sliderPosition = 0.5;
   let isDragging = false;
+  let isDraggingHandleVertical = false;
+  let handleVerticalPosition = 0.5;
 
   // ─── DOM References ─────────────────────────────────────────────────
   const els = {
@@ -261,12 +263,20 @@
     els.sliderReal.style.clipPath = `inset(0 0 0 ${percentage}%)`;
     els.sliderLine.style.left = percentage + '%';
     els.sliderHandle.style.left = percentage + '%';
+    els.sliderHandle.style.top = (handleVerticalPosition * 100) + '%';
   }
 
   function handleSliderMove(clientX) {
     const rect = els.sliderMode.getBoundingClientRect();
     const raw = (clientX - rect.left) / rect.width;
     sliderPosition = Math.max(0, Math.min(1, raw));
+    updateSlider();
+  }
+
+  function handleHandleVerticalMove(clientY) {
+    const rect = els.sliderMode.getBoundingClientRect();
+    const raw = (clientY - rect.top) / rect.height;
+    handleVerticalPosition = Math.max(0, Math.min(1, raw));
     updateSlider();
   }
 
@@ -345,15 +355,39 @@
   els.sliderMode.addEventListener('mousedown', () => (isDragging = true));
   els.sliderMode.addEventListener('touchstart', () => (isDragging = true), { passive: true });
 
-  window.addEventListener('mouseup', () => (isDragging = false));
-  window.addEventListener('touchend', () => (isDragging = false));
+  // Handle vertical drag
+  els.sliderHandle.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    isDraggingHandleVertical = true;
+  });
+  els.sliderHandle.addEventListener('touchstart', (e) => {
+    e.stopPropagation();
+    isDraggingHandleVertical = true;
+  }, { passive: true });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    isDraggingHandleVertical = false;
+  });
+  window.addEventListener('touchend', () => {
+    isDragging = false;
+    isDraggingHandleVertical = false;
+  });
 
   window.addEventListener('mousemove', (e) => {
+    if (isDraggingHandleVertical) {
+      handleHandleVerticalMove(e.clientY);
+      return;
+    }
     if (!isDragging) return;
     handleSliderMove(e.clientX);
   });
 
   window.addEventListener('touchmove', (e) => {
+    if (isDraggingHandleVertical) {
+      handleHandleVerticalMove(e.touches[0].clientY);
+      return;
+    }
     if (!isDragging) return;
     handleSliderMove(e.touches[0].clientX);
   }, { passive: true });
