@@ -36,6 +36,13 @@
       hintSplit: 'Split',
       hintSlider: 'Slider',
       hintSnap: 'Snap',
+      toastCameraStarted: 'Camera started',
+      toastCameraActive: 'Camera is already active',
+      toastModeSplit: 'Switched to side-by-side mode',
+      toastModeSlider: 'Switched to slider mode',
+      toastModeActive: 'Already in this mode',
+      toastSnapshot: 'Snapshot captured',
+      toastSnapshotNoCamera: 'Start camera first to take snapshot',
     },
     zh: {
       appTitle: '真实自我',
@@ -65,6 +72,13 @@
       hintSplit: '并排',
       hintSlider: '滑动',
       hintSnap: '截图',
+      toastCameraStarted: '摄像头已开启',
+      toastCameraActive: '摄像头已经是开启状态',
+      toastModeSplit: '已切换到并排模式',
+      toastModeSlider: '已切换到滑动模式',
+      toastModeActive: '当前已经是该模式',
+      toastSnapshot: '截图已保存',
+      toastSnapshotNoCamera: '请先开启摄像头再截图',
     },
   };
 
@@ -123,6 +137,29 @@
     realError: document.getElementById('realError'),
     snapPreview: document.getElementById('snapPreview'),
   };
+
+  // ─── Toast Notifications ────────────────────────────────────────────
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    // Trigger reflow for transition
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }, 2500);
+  }
 
   // ─── Camera ─────────────────────────────────────────────────────────
   function showCameraError(message) {
@@ -342,11 +379,44 @@
   }
 
   // ─── Event Listeners ────────────────────────────────────────────────
-  els.btnStart.addEventListener('click', startCamera);
-  els.btnSplit.addEventListener('click', () => setMode('split'));
-  els.btnSlider.addEventListener('click', () => setMode('slider'));
-  els.btnSnap.addEventListener('click', takeSnapshot);
-  els.btnRetry.addEventListener('click', startCamera);
+  els.btnStart.addEventListener('click', () => {
+    startCamera().then(() => {
+      showToast(i18n[currentLang].toastCameraStarted, 'success');
+    }).catch(() => {
+      showToast(i18n[currentLang].cameraError, 'error');
+    });
+  });
+  els.btnSplit.addEventListener('click', () => {
+    if (currentMode === 'split') {
+      showToast(i18n[currentLang].toastModeActive, 'info');
+    } else {
+      setMode('split');
+      showToast(i18n[currentLang].toastModeSplit, 'success');
+    }
+  });
+  els.btnSlider.addEventListener('click', () => {
+    if (currentMode === 'slider') {
+      showToast(i18n[currentLang].toastModeActive, 'info');
+    } else {
+      setMode('slider');
+      showToast(i18n[currentLang].toastModeSlider, 'success');
+    }
+  });
+  els.btnSnap.addEventListener('click', () => {
+    if (hiddenVideo) {
+      takeSnapshot();
+      showToast(i18n[currentLang].toastSnapshot, 'success');
+    } else {
+      showToast(i18n[currentLang].toastSnapshotNoCamera, 'warning');
+    }
+  });
+  els.btnRetry.addEventListener('click', () => {
+    startCamera().then(() => {
+      showToast(i18n[currentLang].toastCameraStarted, 'success');
+    }).catch(() => {
+      showToast(i18n[currentLang].cameraError, 'error');
+    });
+  });
 
   // Language switch
   document.querySelectorAll('.lang-btn').forEach((btn) => {
@@ -397,12 +467,39 @@
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
     if (e.key === 's' || e.key === 'S') {
-      if (!els.btnStart.disabled) startCamera();
+      if (!els.btnStart.disabled) {
+        startCamera().then(() => {
+          showToast(i18n[currentLang].toastCameraStarted, 'success');
+        }).catch(() => {
+          showToast(i18n[currentLang].cameraError, 'error');
+        });
+      } else {
+        showToast(i18n[currentLang].toastCameraActive, 'warning');
+      }
     }
-    if (e.key === '1') setMode('split');
-    if (e.key === '2') setMode('slider');
-    if ((e.key === 'p' || e.key === 'P') && hiddenVideo) {
-      takeSnapshot();
+    if (e.key === '1') {
+      if (currentMode === 'split') {
+        showToast(i18n[currentLang].toastModeActive, 'info');
+      } else {
+        setMode('split');
+        showToast(i18n[currentLang].toastModeSplit, 'success');
+      }
+    }
+    if (e.key === '2') {
+      if (currentMode === 'slider') {
+        showToast(i18n[currentLang].toastModeActive, 'info');
+      } else {
+        setMode('slider');
+        showToast(i18n[currentLang].toastModeSlider, 'success');
+      }
+    }
+    if (e.key === 'p' || e.key === 'P') {
+      if (hiddenVideo) {
+        takeSnapshot();
+        showToast(i18n[currentLang].toastSnapshot, 'success');
+      } else {
+        showToast(i18n[currentLang].toastSnapshotNoCamera, 'warning');
+      }
     }
   });
 
@@ -425,7 +522,9 @@
   // Note: Browsers may block getUserMedia without user interaction,
   // so this is a best-effort; the Start Camera button remains as fallback.
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    startCamera().catch(() => {
+    startCamera().then(() => {
+      showToast(i18n[currentLang].toastCameraStarted, 'success');
+    }).catch(() => {
       // Silently fail; user can click Start Camera manually
     });
   }
