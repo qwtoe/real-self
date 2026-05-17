@@ -96,6 +96,29 @@ body {
   max-width: 500px;
 }
 
+/* Shortcut Hints */
+.shortcut-hints {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.shortcut-hints kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 2px 0 var(--border-color);
+  margin: 0 2px;
+}
+
 /* Controls */
 .controls {
   display: flex;
@@ -256,6 +279,29 @@ body {
   font-size: 3em;
 }
 
+.error-state {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  color: #ff6b6b;
+  font-size: 1rem;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+  padding: 20px;
+}
+
+.error-state .big-icon {
+  font-size: 3em;
+}
+
+.error-state span:not(.big-icon) {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
 /* Slider Mode */
 .slider-container {
   position: relative;
@@ -373,6 +419,27 @@ body {
   color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+.btn-download {
+  margin-top: 10px;
+  padding: 6px 16px;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: var(--text-primary);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-download:hover {
+  transform: scale(1.05);
+}
+
+.btn-download:active {
+  transform: scale(0.97);
 }
 
 /* Footer */

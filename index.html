@@ -44,6 +44,10 @@
     <button class="btn btn-snap" id="btnSnap" data-i18n="btnSnap" aria-label="Take snapshot" style="display:none;">Take Snapshot</button>
   </nav>
 
+  <div class="shortcut-hints" id="shortcutHints">
+    <span data-i18n="hintShortcuts">Shortcuts: <kbd>S</kbd> Start <kbd>1</kbd> Split <kbd>2</kbd> Slider <kbd>P</kbd> Snapshot</span>
+  </div>
+
   <!-- Split Mode -->
   <main class="container" id="splitMode" role="region" aria-label="Side by side comparison">
     <article class="panel">
@@ -55,6 +59,11 @@
         <div class="placeholder" id="mirrorPlaceholder">
           <span class="big-icon" aria-hidden="true">🪞</span>
           <span data-i18n="placeholderInactive">Camera inactive</span>
+        </div>
+        <div class="error-state" id="mirrorError" style="display:none;">
+          <span class="big-icon" aria-hidden="true">⚠️</span>
+          <span data-i18n="cameraError">Unable to access camera</span>
+          <button class="btn btn-primary" id="btnRetry" data-i18n="btnRetry">Try Again</button>
         </div>
         <video id="mirrorVideo" class="video-mirror" autoplay playsinline muted style="display:none;"></video>
       </div>
@@ -70,6 +79,10 @@
         <div class="placeholder" id="realPlaceholder">
           <span class="big-icon" aria-hidden="true">👤</span>
           <span data-i18n="placeholderInactive">Camera inactive</span>
+        </div>
+        <div class="error-state" id="realError" style="display:none;">
+          <span class="big-icon" aria-hidden="true">⚠️</span>
+          <span data-i18n="cameraError">Unable to access camera</span>
         </div>
         <canvas id="realCanvas" style="display:none;" aria-label="Real camera view"></canvas>
       </div>

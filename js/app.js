@@ -26,7 +26,12 @@
       snapMirror: 'Mirrored (what you are used to)',
       snapReal: 'Real (how others see you)',
       cameraActive: 'Camera Active',
+      btnStarting: 'Starting...',
+      cameraError: 'Unable to access camera',
+      btnRetry: 'Try Again',
+      btnDownload: 'Download',
       alertCameraError: 'Unable to access camera: ',
+      hintShortcuts: 'Shortcuts: <kbd>S</kbd> Start <kbd>1</kbd> Split <kbd>2</kbd> Slider <kbd>P</kbd> Snapshot',
     },
     zh: {
       appTitle: '真实自我',
@@ -46,7 +51,12 @@
       snapMirror: '镜像（你习惯看到的自己）',
       snapReal: '真实（别人眼中的你）',
       cameraActive: '摄像头已开启',
+      btnStarting: '正在开启...',
+      cameraError: '无法访问摄像头',
+      btnRetry: '重试',
+      btnDownload: '下载',
       alertCameraError: '无法访问摄像头：',
+      hintShortcuts: '快捷键：<kbd>S</kbd> 开启 <kbd>1</kbd> 并排 <kbd>2</kbd> 滑动 <kbd>P</kbd> 截图',
     },
   };
 
@@ -88,6 +98,7 @@
     btnSplit: document.getElementById('btnSplit'),
     btnSlider: document.getElementById('btnSlider'),
     btnSnap: document.getElementById('btnSnap'),
+    btnRetry: document.getElementById('btnRetry'),
     splitMode: document.getElementById('splitMode'),
     sliderMode: document.getElementById('sliderMode'),
     mirrorVideo: document.getElementById('mirrorVideo'),
@@ -98,11 +109,31 @@
     sliderHandle: document.getElementById('sliderHandle'),
     mirrorPlaceholder: document.getElementById('mirrorPlaceholder'),
     realPlaceholder: document.getElementById('realPlaceholder'),
+    mirrorError: document.getElementById('mirrorError'),
+    realError: document.getElementById('realError'),
     snapPreview: document.getElementById('snapPreview'),
   };
 
   // ─── Camera ─────────────────────────────────────────────────────────
+  function showCameraError(message) {
+    els.mirrorPlaceholder.style.display = 'none';
+    els.realPlaceholder.style.display = 'none';
+    els.mirrorError.style.display = 'flex';
+    els.realError.style.display = 'flex';
+    els.btnStart.textContent = i18n[currentLang].btnStart;
+    els.btnStart.disabled = false;
+  }
+
+  function clearCameraError() {
+    els.mirrorError.style.display = 'none';
+    els.realError.style.display = 'none';
+  }
+
   async function startCamera() {
+    clearCameraError();
+    els.btnStart.textContent = i18n[currentLang].btnStarting;
+    els.btnStart.disabled = true;
+
     try {
       mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -152,7 +183,7 @@
       };
     } catch (error) {
       console.error('Camera access failed:', error);
-      alert(i18n[currentLang].alertCameraError + error.message);
+      showCameraError(error.message);
     }
   }
 
@@ -276,6 +307,18 @@
       caption.textContent = label;
       item.appendChild(caption);
 
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn btn-download';
+      downloadBtn.textContent = i18n[currentLang].btnDownload;
+      downloadBtn.addEventListener('click', () => {
+        const link = document.createElement('a');
+        const safeLabel = label.replace(/\s+/g, '-').replace(/[()]/g, '');
+        link.download = `realself-${safeLabel}-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+      item.appendChild(downloadBtn);
+
       els.snapPreview.appendChild(item);
     });
   }
@@ -285,6 +328,7 @@
   els.btnSplit.addEventListener('click', () => setMode('split'));
   els.btnSlider.addEventListener('click', () => setMode('slider'));
   els.btnSnap.addEventListener('click', takeSnapshot);
+  els.btnRetry.addEventListener('click', startCamera);
 
   // Language switch
   document.querySelectorAll('.lang-btn').forEach((btn) => {
